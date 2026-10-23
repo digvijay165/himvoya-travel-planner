@@ -21,6 +21,8 @@ import {
 import SculptureHero from '@/components/ui/liquid-sculpture-hero'
 import DestinationGuide from '@/components/destination-guide'
 import type { PlaceGuideData } from '@/components/destination-guide'
+import { moreIndiaPlaces } from '@/data/more-india-places'
+import { placePhotos } from '@/data/place-photos'
 import SiteHeader from '@/components/site-header'
 import AuthPage, { type AuthMode } from '@/components/auth-page'
 import PrivacyPage from '@/components/privacy-page'
@@ -59,21 +61,16 @@ type SavedTrip = {
 const storageKey = 'roam-planner-v1'
 const destinationPhoto = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1400&q=85`
 const fallbackTravelImage = 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1400&q=85'
-type CuratedPlaceSeed = Omit<Destination, 'image' | 'gallery'> & { imageId: string; galleryIds: string[] }
 
-function curatedPlace({ imageId, galleryIds, ...place }: CuratedPlaceSeed): Destination {
-  const image = destinationPhoto(imageId)
-  return { ...place, image, gallery: [image, ...galleryIds.map(destinationPhoto)] }
-}
+type PlaceSeed = Omit<Destination, 'image' | 'gallery' | 'galleryAttributions'>
 
-const foreignSeedBase: Destination[] = [
+const foreignSeedBase: PlaceSeed[] = [
   {
     id: 'kyoto',
     city: 'Kyoto',
     country: 'Japan',
     region: 'East Asia',
     category: 'Culture',
-    image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=85',
     note: 'Temple paths & tea houses',
     from: '7 days feels right',
     moments: ['Walk the moss gardens before the gates open', 'A long lunch in a tiny soba shop', 'Take the quieter path up Fushimi Inari'],
@@ -102,7 +99,6 @@ const foreignSeedBase: Destination[] = [
     country: 'Italy',
     region: 'Southern Europe',
     category: 'Coast',
-    image: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1200&q=85',
     note: 'Cliffside villages & sea air',
     from: '5 days feels right',
     moments: ['A slow ferry between the little towns', 'Swim below the cliffs after lunch', 'Dinner on a terrace as the light fades'],
@@ -112,7 +108,6 @@ const foreignSeedBase: Destination[] = [
     bestTime: 'Late spring · early autumn',
     language: 'Italian',
     currency: 'Euro (EUR)',
-    gallery: ['photo-1533587851505-d119e13fa0d7', 'photo-1515859005217-8a1f08870f59', 'photo-1500375592092-40eb2168fd21'].map(destinationPhoto),
     highlights: [
       { name: 'Amalfi Cathedral', area: 'Amalfi town', kind: 'Historic landmark', description: 'Step into the cathedral complex above the lively Piazza Duomo and take in its layered history.', time: '1–2 hours' },
       { name: 'Valle delle Ferriere', area: 'Above Amalfi', kind: 'Nature trail', description: 'A green valley reached by walking paths, with waterfalls and a quieter side of the coast.', time: 'Half day' },
@@ -132,7 +127,6 @@ const foreignSeedBase: Destination[] = [
     country: 'Portugal',
     region: 'Southern Europe',
     category: 'Slow living',
-    image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1200&q=85',
     note: 'Old trams & late dinners',
     from: '4 days feels right',
     moments: ['Coffee and a warm pastel de nata', 'Browse the small shops in Alfama', 'Catch the last light from a hilltop miradouro'],
@@ -142,7 +136,6 @@ const foreignSeedBase: Destination[] = [
     bestTime: 'Spring · early autumn',
     language: 'Portuguese',
     currency: 'Euro (EUR)',
-    gallery: ['photo-1555881400-89b8dc2bf8f4', 'photo-1506377585622-bedcbb027afc', 'photo-1555881400-74d7acaacd8b'].map(destinationPhoto),
     highlights: [
       { name: 'Alfama', area: 'Old Lisbon', kind: 'Historic neighborhood', description: 'Follow a maze of lanes and stairways, pausing at small squares and river-facing viewpoints.', time: 'Half day' },
       { name: 'Belém Tower', area: 'Belém', kind: 'Riverside landmark', description: 'Visit the historic tower beside the Tagus and enjoy the open waterfront paths nearby.', time: '1–2 hours' },
@@ -162,7 +155,6 @@ const foreignSeedBase: Destination[] = [
     country: 'Bali, Indonesia',
     region: 'Southeast Asia',
     category: 'Nature',
-    image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=85',
     note: 'Green mornings & open skies',
     from: '6 days feels right',
     moments: ['An early walk through the rice terraces', 'Lunch under the palms in town', 'An unhurried afternoon by the water'],
@@ -172,7 +164,6 @@ const foreignSeedBase: Destination[] = [
     bestTime: 'Dry season · early mornings',
     language: 'Indonesian · Balinese',
     currency: 'Indonesian rupiah (IDR)',
-    gallery: ['photo-1518548419970-58e3b4079ab2', 'photo-1516483638261-f4dbaf036963', 'photo-1537996194471-e657df975ab4'].map(destinationPhoto),
     highlights: [
       { name: 'Tegallalang Rice Terraces', area: 'North of Ubud', kind: 'Landscape & walking', description: 'Walk among the layered green fields and learn about the traditional subak irrigation landscape.', time: '2–3 hours' },
       { name: 'Sacred Monkey Forest Sanctuary', area: 'Central Ubud', kind: 'Forest & temple', description: 'Explore a shaded forest sanctuary with temple structures and winding paths.', time: '1–2 hours' },
@@ -192,7 +183,6 @@ const foreignSeedBase: Destination[] = [
     country: 'Morocco',
     region: 'North Africa',
     category: 'Culture',
-    image: 'https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=1200&q=85',
     note: 'Courtyards & spice souks',
     from: '4 days feels right',
     moments: ['Start with mint tea in a courtyard', 'Follow the color through the souks', 'Find a rooftop for the evening call to prayer'],
@@ -202,7 +192,6 @@ const foreignSeedBase: Destination[] = [
     bestTime: 'Spring · autumn',
     language: 'Arabic · Amazigh · French',
     currency: 'Moroccan dirham (MAD)',
-    gallery: ['photo-1489749798305-4fea3ae63d43', 'photo-1539020140153-e479b8c22e70', 'photo-1518005020951-eccb494ad742'].map(destinationPhoto),
     highlights: [
       { name: 'Jemaa el-Fna', area: 'Medina', kind: 'Square & culture', description: 'Experience the central square as it changes through the day, with food stalls and cultural performances.', time: 'Late afternoon into evening' },
       { name: 'Koutoubia Mosque gardens', area: 'Medina edge', kind: 'Landmark & gardens', description: 'See Marrakech’s best-known minaret from the surrounding public gardens and paths.', time: '45–60 minutes' },
@@ -222,7 +211,6 @@ const foreignSeedBase: Destination[] = [
     country: 'Italy',
     region: 'Northern Europe',
     category: 'Nature',
-    image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=85',
     note: 'Alpine trails & quiet cabins',
     from: '5 days feels right',
     moments: ['A gentle trail before the day warms up', 'Polenta and mountain cheese at a rifugio', 'Watch the peaks turn pink at dusk'],
@@ -232,7 +220,6 @@ const foreignSeedBase: Destination[] = [
     bestTime: 'Summer · early autumn',
     language: 'Italian · German · Ladin',
     currency: 'Euro (EUR)',
-    gallery: ['photo-1472396961693-142e6e269027', 'photo-1519681393784-d120267933ba', 'photo-1464822759023-fed622ff2c3b'].map(destinationPhoto),
     highlights: [
       { name: 'Seceda ridgeline', area: 'Val Gardena', kind: 'Mountain panorama', description: 'Take in the dramatic ridge and alpine meadows, with walking routes across the high plateau.', time: 'Half day or more' },
       { name: 'Ortisei', area: 'Val Gardena', kind: 'Mountain village', description: 'Use the village as a base for cafés, local woodcarving, and lifts into the surrounding mountains.', time: 'A relaxed afternoon' },
@@ -248,10 +235,9 @@ const foreignSeedBase: Destination[] = [
   },
 ]
 
-const foreignAdditions: Destination[] = [
-  curatedPlace({
-    id: 'tokyo', city: 'Tokyo', country: 'Japan', region: 'East Asia · Kantō', category: 'Culture', imageId: 'photo-1540959733332-eab4deabeeaf',
-    galleryIds: ['photo-1513407030348-c983a97b98d8', 'photo-1519608487953-e999c86e7455', 'photo-1536098561742-ca998e48cbcc'],
+const foreignAdditions: PlaceSeed[] = [
+  {
+    id: 'tokyo', city: 'Tokyo', country: 'Japan', region: 'East Asia · Kantō', category: 'Culture',
     note: 'Neighborhoods, night lights & tiny kitchens', from: '4–6 days feels right',
     moments: ['Start with a quiet shrine garden', 'Pick one neighborhood to explore slowly', 'Ride the train to a small local dinner spot'],
     location: 'Tokyo, Japan', coordinates: { lat: 35.6762, lon: 139.6503 },
@@ -267,10 +253,9 @@ const foreignAdditions: Destination[] = [
     whereToStay: 'Tokyo Station and Ginza are central; Shinjuku is well connected and lively; Ueno is convenient for museums and rail.',
     localFlavours: ['Sushi', 'Ramen', 'Tempura', 'Onigiri'], nearbyEscapes: ['Kamakura', 'Nikkō', 'Yokohama'],
     planningNotes: ['Large stations can be confusing; save your hotel address in Japanese.', 'Popular restaurants may need advance bookings.', 'Cherry-blossom and autumn-color dates vary each year.'],
-  }),
-  curatedPlace({
-    id: 'paris', city: 'Paris', country: 'France', region: 'Western Europe · Île-de-France', category: 'Culture', imageId: 'photo-1502602898657-3e91760cbb34',
-    galleryIds: ['photo-1499856871958-5b9627545d1a', 'photo-1505761671935-60b3a7427bad', 'photo-1499856871958-5b9627545d1a'],
+  },
+  {
+    id: 'paris', city: 'Paris', country: 'France', region: 'Western Europe · Île-de-France', category: 'Culture',
     note: 'Museum mornings & long café afternoons', from: '4–6 days feels right',
     moments: ['Walk beside the Seine at first light', 'Choose one museum and linger', 'Find a neighborhood bakery for breakfast'],
     location: 'Paris, Île-de-France, France', coordinates: { lat: 48.8566, lon: 2.3522 },
@@ -286,10 +271,9 @@ const foreignAdditions: Destination[] = [
     whereToStay: 'Choose a base near a Metro line; the Marais, Latin Quarter, and Saint-Germain are popular for first visits.',
     localFlavours: ['Croissant', 'Baguette sandwich', 'Crêpes', 'Seasonal bistro dishes'], nearbyEscapes: ['Versailles', 'Giverny', 'Fontainebleau'],
     planningNotes: ['Reserve timed entries for major museums and monuments.', 'Keep belongings secure in crowded transit and tourist areas.', 'Walkways and station access can include stairs; check step-free options if needed.'],
-  }),
-  curatedPlace({
-    id: 'rome', city: 'Rome', country: 'Italy', region: 'Southern Europe · Lazio', category: 'Culture', imageId: 'photo-1552832230-c0197dd311b5',
-    galleryIds: ['photo-1525874684015-58379d421a52', 'photo-1515542622106-78bda8ba0e5b', 'photo-1531572753322-ad063cecc140'],
+  },
+  {
+    id: 'rome', city: 'Rome', country: 'Italy', region: 'Southern Europe · Lazio', category: 'Culture',
     note: 'Ancient streets, piazzas & slow suppers', from: '3–5 days feels right',
     moments: ['Walk the Forum before the midday heat', 'Pause for an espresso at the counter', 'Choose a small trattoria away from the busiest square'],
     location: 'Rome, Lazio, Italy', coordinates: { lat: 41.9028, lon: 12.4964 },
@@ -305,10 +289,9 @@ const foreignAdditions: Destination[] = [
     whereToStay: 'Monti is practical for ancient sites; Centro Storico is central; Trastevere is lively after dark.',
     localFlavours: ['Cacio e pepe', 'Carbonara', 'Supplì', 'Artichokes in season'], nearbyEscapes: ['Ostia Antica', 'Tivoli villas', 'Castelli Romani'],
     planningNotes: ['Major sights require timed entry in busy seasons.', 'Cobblestones are uneven; wear supportive footwear.', 'Churches may have dress requirements and photography restrictions.'],
-  }),
-  curatedPlace({
-    id: 'new-york', city: 'New York City', country: 'United States', region: 'North America · New York', category: 'Culture', imageId: 'photo-1496442226666-8d4d0e62e6e9',
-    galleryIds: ['photo-1518391846015-55a9cc003b25', 'photo-1534430480872-3498386e7856', 'photo-1500916434205-0c77489c6cf7'],
+  },
+  {
+    id: 'new-york', city: 'New York City', country: 'United States', region: 'North America · New York', category: 'Culture',
     note: 'City blocks, museums & neighborhood food', from: '4–7 days feels right',
     moments: ['Walk one stretch of the High Line', 'Pick a museum for an unhurried morning', 'Explore a neighborhood beyond Manhattan'],
     location: 'New York City, New York, United States', coordinates: { lat: 40.7128, lon: -74.006 },
@@ -324,10 +307,9 @@ const foreignAdditions: Destination[] = [
     whereToStay: 'Choose a base near a subway station; Midtown is central, while Brooklyn and Queens offer different neighborhood rhythms.',
     localFlavours: ['Bagels', 'Pizza by the slice', 'Deli sandwiches', 'Neighborhood cuisines'], nearbyEscapes: ['Coney Island', 'Governors Island', 'Hudson Valley'],
     planningNotes: ['Check official museum hours and ticket policies.', 'Keep valuables secure in crowded stations.', 'Taxis and rideshares can be slow in traffic; use transit for cross-city trips.'],
-  }),
-  curatedPlace({
-    id: 'cape-town', city: 'Cape Town', country: 'South Africa', region: 'Southern Africa · Western Cape', category: 'Nature', imageId: 'photo-1580060839134-75a5edca2e99',
-    galleryIds: ['photo-1508184964240-ee96bb9677a7', 'photo-1532581291347-9c39cf10a73c', 'photo-1501594907352-04cda38ebc29'],
+  },
+  {
+    id: 'cape-town', city: 'Cape Town', country: 'South Africa', region: 'Southern Africa · Western Cape', category: 'Nature',
     note: 'Mountain paths, ocean air & coastal roads', from: '5–7 days feels right',
     moments: ['Check the mountain forecast before a hike', 'Take a slow drive along the peninsula', 'Save sunset for a public viewpoint'],
     location: 'Cape Town, Western Cape, South Africa', coordinates: { lat: -33.9249, lon: 18.4241 },
@@ -343,10 +325,9 @@ const foreignAdditions: Destination[] = [
     whereToStay: 'The City Bowl is central; Sea Point is coastal and walkable; choose lodging with secure transport arrangements.',
     localFlavours: ['Cape Malay curry', 'Braai', 'Fresh seafood', 'Koeksisters'], nearbyEscapes: ['Stellenbosch', 'Boulders Beach', 'Cape Point'],
     planningNotes: ['Mountain weather can turn quickly; carry layers and water.', 'Follow local safety guidance and avoid isolated areas after dark.', 'Check park and beach notices before travel.'],
-  }),
-  curatedPlace({
-    id: 'reykjavik', city: 'Reykjavík', country: 'Iceland', region: 'Northern Europe · Capital Region', category: 'Nature', imageId: 'photo-1504829857797-ddff29c27927',
-    galleryIds: ['photo-1531366936337-7c912a4589a7', 'photo-1476610182048-b716b8518aae', 'photo-1464278533981-50106e6176b1'],
+  },
+  {
+    id: 'reykjavik', city: 'Reykjavík', country: 'Iceland', region: 'Northern Europe · Capital Region', category: 'Nature',
     note: 'Hot pools, harbor walks & wild day trips', from: '3–5 days feels right',
     moments: ['Start with the harbor and old town', 'Soak at a local geothermal pool', 'Keep a flexible day for changing weather'],
     location: 'Reykjavík, Capital Region, Iceland', coordinates: { lat: 64.1466, lon: -21.9426 },
@@ -362,10 +343,9 @@ const foreignAdditions: Destination[] = [
     whereToStay: 'Stay downtown for dining and walking, or near a bus corridor for easier airport and excursion connections.',
     localFlavours: ['Skyr', 'Lamb soup', 'Fresh fish', 'Rye bread'], nearbyEscapes: ['Golden Circle', 'Reykjanes Peninsula', 'South Coast'],
     planningNotes: ['Daylight hours vary widely by season.', 'Road and trail conditions can change in hours.', 'Book popular geothermal baths and tours ahead when needed.'],
-  }),
-  curatedPlace({
-    id: 'cusco', city: 'Cusco & Sacred Valley', country: 'Peru', region: 'South America · Andes', category: 'Trek & trails', imageId: 'photo-1526392060635-9d6019884377',
-    galleryIds: ['photo-1587595431973-160d0d94add1', 'photo-1526392060635-9d6019884377', 'photo-1516026672322-bc52d61a55d5'],
+  },
+  {
+    id: 'cusco', city: 'Cusco & Sacred Valley', country: 'Peru', region: 'South America · Andes', category: 'Trek & trails',
     note: 'Andean history, market towns & mountain trails', from: '5–8 days feels right',
     moments: ['Arrive slowly and allow time to adjust to altitude', 'Explore one Sacred Valley town at a time', 'Reserve official entry before visiting Machu Picchu'],
     location: 'Cusco, Cusco Region, Peru', coordinates: { lat: -13.5319, lon: -71.9675 },
@@ -381,10 +361,9 @@ const foreignAdditions: Destination[] = [
     whereToStay: 'Stay centrally in Cusco first, then consider a Sacred Valley base to reduce travel time and altitude exposure.',
     localFlavours: ['Cuy (guinea pig)', 'Lomo saltado', 'Choclo with cheese', 'Quinoa soup'], nearbyEscapes: ['Ollantaytambo', 'Pisac', 'Maras salt ponds'],
     planningNotes: ['Allow acclimatization days before strenuous activity.', 'Check entry permits, train schedules, and current site rules.', 'Use a registered guide for remote treks and check weather locally.'],
-  }),
-  curatedPlace({
-    id: 'petra', city: 'Petra & Wadi Musa', country: 'Jordan', region: 'West Asia · Ma’an Governorate', category: 'Culture', imageId: 'photo-1548786817-dd6e453ccca7',
-    galleryIds: ['photo-1580837119756-563d608dd119', 'photo-1603565816030-6b389eeb23cb', 'photo-1548786817-dd6e453ccca7'],
+  },
+  {
+    id: 'petra', city: 'Petra & Wadi Musa', country: 'Jordan', region: 'West Asia · Ma’an Governorate', category: 'Culture',
     note: 'Rose-colored stone, desert trails & ancient routes', from: '2–3 days feels right',
     moments: ['Enter early and walk the Siq at an unhurried pace', 'Carry water for the long archaeological paths', 'Leave a second day for quieter monuments'],
     location: 'Petra, Ma’an Governorate, Jordan', coordinates: { lat: 30.3285, lon: 35.4444 },
@@ -400,29 +379,15 @@ const foreignAdditions: Destination[] = [
     whereToStay: 'Wadi Musa has the widest choice of stays and is close to the visitor entrance.',
     localFlavours: ['Mansaf', 'Maqluba', 'Bedouin tea', 'Fresh flatbread'], nearbyEscapes: ['Wadi Rum', 'Dana Biosphere Reserve', 'Aqaba'],
     planningNotes: ['Expect many kilometers of walking on uneven ground.', 'Carry sun protection and water; shade is limited.', 'Check current park hours and local travel advisories.'],
-  }),
+  },
 ]
 
-const foreignPhotoAdditions: Record<string, string[]> = {
-  amalfi: ['photo-1516483638261-f4dbaf036963', 'photo-1533105079780-92b9be482077'],
-  lisbon: ['photo-1555881400-89b8dc2bf8f4', 'photo-1555881400-74d7acaacd8b'],
-  bali: ['photo-1530789253388-582c481c54b0', 'photo-1518548419970-58e3b4079ab2'],
-  marrakech: ['photo-1489749798305-4fea3ae63d43', 'photo-1518005020951-eccb494ad742'],
-  dolomites: ['photo-1464822759023-fed622ff2c3b', 'photo-1472396961693-142e6e269027'],
-}
+const foreignSeed: PlaceSeed[] = [...foreignSeedBase, ...foreignAdditions]
 
-const foreignSeed: Destination[] = [
-  ...foreignSeedBase.map((destination) => ({
-    ...destination,
-    gallery: [...new Set([...(destination.gallery ?? [destination.image]), ...(foreignPhotoAdditions[destination.id] ?? []).map(destinationPhoto)])],
-  })),
-  ...foreignAdditions,
-]
-
-const indiaSeedBase: Destination[] = [
+const indiaSeedBase: PlaceSeed[] = [
   {
     id: 'darjeeling', city: 'Darjeeling', country: 'India', region: 'West Bengal · Eastern Himalaya', category: 'Drive & rail',
-    image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=85', note: 'Toy trains, tea gardens & mountain air', from: '3–5 days feels right',
+    note: 'Toy trains, tea gardens & mountain air', from: '3–5 days feels right',
     moments: ['Ride the Darjeeling Himalayan Railway', 'Walk through a tea garden', 'Watch the light change over the Kanchenjunga range'], location: 'Darjeeling, West Bengal, India', coordinates: { lat: 27.041, lon: 88.2663 },
     overview: 'A hill town of tea estates, Himalayan views, old lanes, and a narrow-gauge railway. Build in slow mornings; cloud and mountain weather shape the views.', bestTime: 'Clearer skies often follow the monsoon', language: 'Bengali · Nepali · Hindi', currency: 'Indian rupee (INR)',
     highlights: [
@@ -436,7 +401,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'shimla', city: 'Shimla', country: 'India', region: 'Himachal Pradesh · Western Himalaya', category: 'Drive & rail',
-    image: 'https://images.unsplash.com/photo-1597074866923-dc0589150358?auto=format&fit=crop&w=1200&q=85', note: 'Mountain railways & pine walks', from: '3–4 days feels right',
+    note: 'Mountain railways & pine walks', from: '3–4 days feels right',
     moments: ['Take the Kalka–Shimla toy train', 'Walk the Ridge and Mall Road', 'Find a quiet pine trail above town'], location: 'Shimla, Himachal Pradesh, India', coordinates: { lat: 31.1048, lon: 77.1734 },
     overview: 'A Himalayan hill town with a heritage rail approach, wooded walks, and a lively central ridge. Pair the town with nearby villages for an easier pace.', bestTime: 'Spring · autumn', language: 'Hindi · Pahari · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -450,7 +415,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'ladakh', city: 'Leh & Ladakh', country: 'India', region: 'Ladakh · High Himalaya', category: 'Trek & trails',
-    image: 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=1200&q=85', note: 'High passes, monasteries & open roads', from: '7–10 days feels right',
+    note: 'High passes, monasteries & open roads', from: '7–10 days feels right',
     moments: ['Take time to acclimatize in Leh', 'Visit a monastery with local guidance', 'Plan a careful day drive to a high-altitude lake'], location: 'Leh, Ladakh, India', coordinates: { lat: 34.1526, lon: 77.5771 },
     overview: 'A high-altitude region of stark mountains, monasteries, villages, and long road journeys. Plan for altitude, acclimatization, and changing road conditions before adding strenuous activity.', bestTime: 'Summer road season · check current access', language: 'Ladakhi · Hindi · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -463,7 +428,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'manali', city: 'Manali', country: 'India', region: 'Himachal Pradesh · Kullu Valley', category: 'Trek & trails',
-    image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=85', note: 'River valleys, forest trails & mountain drives', from: '4–6 days feels right',
+    note: 'River valleys, forest trails & mountain drives', from: '4–6 days feels right',
     moments: ['Walk the old Manali lanes', 'Take a guided forest or valley trail', 'Leave a full day for a weather-aware mountain drive'], location: 'Manali, Himachal Pradesh, India', coordinates: { lat: 32.2396, lon: 77.1887 },
     overview: 'A popular base in the Kullu Valley for riverside walks, nearby villages, and high mountain excursions. Treat pass drives and hikes as weather-dependent plans.', bestTime: 'Spring · autumn · verify seasonal routes', language: 'Hindi · Kulluvi · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -475,7 +440,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'rishikesh', city: 'Rishikesh', country: 'India', region: 'Uttarakhand · Garhwal', category: 'Trek & trails',
-    image: 'https://images.unsplash.com/photo-1609947017136-9dabd2c6f4b8?auto=format&fit=crop&w=1200&q=85', note: 'River walks, forest paths & foothill trails', from: '3–5 days feels right',
+    note: 'River walks, forest paths & foothill trails', from: '3–5 days feels right',
     moments: ['Walk between the river bridges', 'Join a guided foothill hike', 'Spend an evening by the Ganga respectfully'], location: 'Rishikesh, Uttarakhand, India', coordinates: { lat: 30.0869, lon: 78.2676 },
     overview: 'A Ganga-side town known for yoga, ashrams, river scenery, and access to the Himalayan foothills. Treat river activities as operator- and season-dependent.', bestTime: 'October · April, with seasonal checks', language: 'Hindi · Garhwali · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -487,7 +452,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'munnar', city: 'Munnar', country: 'India', region: 'Kerala · Western Ghats', category: 'Nature',
-    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=85', note: 'Tea hills, cool air & winding drives', from: '3–4 days feels right',
+    note: 'Tea hills, cool air & winding drives', from: '3–4 days feels right',
     moments: ['Take the winding drive through tea country', 'Visit a tea museum or estate', 'Choose a guided walk in the hills'], location: 'Munnar, Kerala, India', coordinates: { lat: 10.0889, lon: 77.0595 },
     overview: 'A highland town surrounded by tea estates, forest reserves, and winding mountain roads. Slow down for the scenic drive and check local rules before entering protected areas.', bestTime: 'Cooler months · verify monsoon conditions', language: 'Malayalam · Tamil · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -499,7 +464,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'goa', city: 'Goa', country: 'India', region: 'Western coast · Konkan', category: 'Coast',
-    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=85', note: 'Coastal drives, old quarters & long beach days', from: '4–6 days feels right',
+    note: 'Coastal drives, old quarters & long beach days', from: '4–6 days feels right',
     moments: ['Take a slow coastal ride between beaches', 'Explore Panaji’s old quarters', 'Save an afternoon for a local seafood meal'], location: 'Goa, India', coordinates: { lat: 15.2993, lon: 74.124 },
     overview: 'A varied coastal state with beach villages, Portuguese-era quarters, markets, and inland nature. Pick one base and avoid trying to cover both coasts in a day.', bestTime: 'November · March', language: 'Konkani · Marathi · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -511,7 +476,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'jaipur', city: 'Jaipur', country: 'India', region: 'Rajasthan · Pink City', category: 'Culture',
-    image: 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&w=1200&q=85', note: 'Fort roads, old-city walks & craft markets', from: '3–4 days feels right',
+    note: 'Fort roads, old-city walks & craft markets', from: '3–4 days feels right',
     moments: ['Walk the old city with a local guide', 'Drive up to Amber Fort early', 'Browse block-print and blue-pottery workshops'], location: 'Jaipur, Rajasthan, India', coordinates: { lat: 26.9124, lon: 75.7873 },
     overview: 'Rajasthan’s capital pairs a distinctive planned old city with hilltop forts, craft traditions, and busy bazaars. Leave space for traffic between neighborhoods.', bestTime: 'October · March', language: 'Hindi · Rajasthani · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -523,7 +488,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'hampi', city: 'Hampi', country: 'India', region: 'Karnataka · Deccan plateau', category: 'Culture',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Complex_of_Virupaksha_Temple%2C_Hampi_%2801%29.jpg/1280px-Complex_of_Virupaksha_Temple%2C_Hampi_%2801%29.jpg', note: 'Ancient ruins, boulder trails & sunrise rides', from: '2–3 days feels right',
+    note: 'Ancient ruins, boulder trails & sunrise rides', from: '2–3 days feels right',
     moments: ['Cycle between the temple ruins', 'Walk the riverside paths with a guide', 'Catch the evening light over the boulder landscape'], location: 'Hampi, Karnataka, India', coordinates: { lat: 15.335, lon: 76.46 },
     overview: 'A remarkable archaeological landscape of temple complexes, river crossings, and granite boulder hills. Respect protected areas and use local guides to understand the site.', bestTime: 'Cooler months · avoid the hottest hours', language: 'Kannada · Telugu · Hindi · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -535,7 +500,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'alleppey', city: 'Alappuzha backwaters', country: 'India', region: 'Kerala · Malabar coast', category: 'Slow living',
-    image: 'https://images.unsplash.com/photo-1602307324854-0d6d8e6d0e0a?auto=format&fit=crop&w=1200&q=85', note: 'Canal journeys, village life & gentle boat rides', from: '2–4 days feels right',
+    note: 'Canal journeys, village life & gentle boat rides', from: '2–4 days feels right',
     moments: ['Take a licensed backwater boat ride', 'Walk a village lane beside the canals', 'Try a slow lunch served on a banana leaf'], location: 'Alappuzha, Kerala, India', coordinates: { lat: 9.4981, lon: 76.3388 },
     overview: 'A low-lying network of canals, lakes, villages, and paddy fields. Choose an operator that follows local waterway and environmental rules, and keep the itinerary unhurried.', bestTime: 'December · March · check monsoon conditions', language: 'Malayalam · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -547,7 +512,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'meghalaya', city: 'Shillong & Meghalaya', country: 'India', region: 'Northeast India · Khasi Hills', category: 'Trek & trails',
-    image: 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=1200&q=85', note: 'Waterfall roads, living root bridges & green trails', from: '5–7 days feels right',
+    note: 'Waterfall roads, living root bridges & green trails', from: '5–7 days feels right',
     moments: ['Drive the hill roads between villages', 'Walk with a local guide to a living root bridge', 'Leave time for waterfalls and rain'], location: 'Shillong, Meghalaya, India', coordinates: { lat: 25.5788, lon: 91.8933 },
     overview: 'Meghalaya’s Khasi and Jaintia hills reward a slower road trip, village stays, waterfalls, and guided forest walks. Heavy rain can change access and trail conditions.', bestTime: 'Drier months for easier trail access', language: 'Khasi · English · Hindi', currency: 'Indian rupee (INR)',
     highlights: [
@@ -559,7 +524,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'sikkim', city: 'Gangtok & Sikkim', country: 'India', region: 'Eastern Himalaya', category: 'Drive & rail',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Gurudongmar_Lake_Sikkim%2C_India_%28edit%29.jpg/1280px-Gurudongmar_Lake_Sikkim%2C_India_%28edit%29.jpg', note: 'Monastery roads, Himalayan views & quiet hikes', from: '5–7 days feels right',
+    note: 'Monastery roads, Himalayan views & quiet hikes', from: '5–7 days feels right',
     moments: ['Explore Gangtok on foot', 'Take a careful day drive to a monastery', 'Choose a guided forest or mountain walk'], location: 'Gangtok, Sikkim, India', coordinates: { lat: 27.3389, lon: 88.6065 },
     overview: 'A hill-state journey through monasteries, mountain viewpoints, and small towns. Road access, permits, and weather can affect routes, especially near border areas.', bestTime: 'Spring · autumn · check current access', language: 'Nepali · Sikkimese · Hindi · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -571,10 +536,9 @@ const indiaSeedBase: Destination[] = [
   },
 ]
 
-const indiaAdditions: Destination[] = [
-  curatedPlace({
-    id: 'varanasi', city: 'Varanasi', country: 'India', region: 'Uttar Pradesh · Ganga plain', category: 'Culture', imageId: 'photo-1561361513-2d000a50f0dc',
-    galleryIds: ['photo-1572782252655-4bc7d92fb4b3', 'photo-1548013146-72479768bada', 'photo-1564507592333-c60657eea523'],
+const indiaAdditions: PlaceSeed[] = [
+  {
+    id: 'varanasi', city: 'Varanasi', country: 'India', region: 'Uttar Pradesh · Ganga plain', category: 'Culture',
     note: 'River mornings, old lanes & living traditions', from: '2–4 days feels right', moments: ['Watch dawn from a public riverfront ghat', 'Walk the old lanes with a local guide', 'Make a quiet visit to Sarnath'],
     location: 'Varanasi, Uttar Pradesh, India', coordinates: { lat: 25.3176, lon: 82.9739 }, overview: 'One of the world’s oldest living cities, Varanasi is a place of pilgrimage, craft, food, and daily life beside the Ganga. Approach sacred spaces with care and leave room for a slower pace.',
     bestTime: 'October · March', language: 'Hindi · Bhojpuri · English', currency: 'Indian rupee (INR)',
@@ -586,10 +550,9 @@ const indiaAdditions: Destination[] = [
     localTip: 'The riverfront is a living sacred place. Follow local guidance, avoid blocking ceremonies, and ask permission before taking photographs.',
     gettingAround: 'Walk the old city with a guide or use cycle rickshaws for short links; traffic and narrow lanes make cars impractical.', whereToStay: 'Choose a registered stay near the old city or Cantonment based on your mobility and noise preferences.',
     localFlavours: ['Kachori sabzi', 'Tamatar chaat', 'Banarasi paan', 'Lassi'], nearbyEscapes: ['Sarnath', 'Ramnagar Fort', 'Chunar'], planningNotes: ['Keep footwear and modest clothing practical for temple visits.', 'Use a licensed boat operator and agree on price before boarding.', 'Crowds, heat, and river conditions change by season.'],
-  }),
-  curatedPlace({
-    id: 'agra', city: 'Agra', country: 'India', region: 'Uttar Pradesh · Yamuna river', category: 'Culture', imageId: 'photo-1564507592333-c60657eea523',
-    galleryIds: ['photo-1548013146-72479768bada', 'photo-1592639296346-560c37a0f711', 'photo-1524492412937-b28074a5d7da'],
+  },
+  {
+    id: 'agra', city: 'Agra', country: 'India', region: 'Uttar Pradesh · Yamuna river', category: 'Culture',
     note: 'Mughal architecture & river-side sunsets', from: '1–2 days feels right', moments: ['See the Taj Mahal early in the day', 'Explore the red sandstone fort', 'Find a public view across the Yamuna at dusk'],
     location: 'Agra, Uttar Pradesh, India', coordinates: { lat: 27.1767, lon: 78.0081 }, overview: 'Agra’s monumental Mughal sites tell a layered story in marble, sandstone, gardens, and river views. Pair the famous landmarks with time for local food and craft.',
     bestTime: 'October · March', language: 'Hindi · Urdu · English', currency: 'Indian rupee (INR)',
@@ -601,10 +564,9 @@ const indiaAdditions: Destination[] = [
     localTip: 'Use official ticket counters or websites and be cautious of unsolicited guides near major gates.',
     gettingAround: 'Use registered taxis, auto-rickshaws, or app-based rides between sites; traffic can add time.', whereToStay: 'Taj Ganj is convenient for an early visit; central Agra has more rail and dining connections.',
     localFlavours: ['Petha', 'Bedai kachori', 'Mughlai dishes', 'Dalmoth'], nearbyEscapes: ['Fatehpur Sikri', 'Bharatpur bird sanctuary', 'Mathura'], planningNotes: ['The Taj Mahal is closed on Fridays; verify current entry details.', 'Sun and heat are strong around open monuments.', 'Protect valuables in crowded markets and transport hubs.'],
-  }),
-  curatedPlace({
-    id: 'jaisalmer', city: 'Jaisalmer', country: 'India', region: 'Rajasthan · Thar Desert', category: 'Culture', imageId: 'photo-1599661046827-dacff0c0f09a',
-    galleryIds: ['photo-1602643163983-ed0babc39797', 'photo-1509316785289-025f5b846b35', 'photo-1590089415225-401ed6f9db8e'],
+  },
+  {
+    id: 'jaisalmer', city: 'Jaisalmer', country: 'India', region: 'Rajasthan · Thar Desert', category: 'Culture',
     note: 'Golden lanes, desert skies & carved havelis', from: '2–4 days feels right', moments: ['Walk the living fort with a local guide', 'Visit a haveli before the midday heat', 'Choose a responsible desert camp outside the dunes'],
     location: 'Jaisalmer, Rajasthan, India', coordinates: { lat: 26.9157, lon: 70.9083 }, overview: 'A sandstone desert city whose fort is still home to residents, shops, and shrines. The old lanes reward gentle exploration, while desert outings need thoughtful operators and water planning.',
     bestTime: 'November · February', language: 'Hindi · Rajasthani · English', currency: 'Indian rupee (INR)',
@@ -616,10 +578,9 @@ const indiaAdditions: Destination[] = [
     localTip: 'The fort is a living neighborhood with limited water. Conserve water, keep noise low, and avoid walking on restricted ramparts.',
     gettingAround: 'Walk the compact old city; use a registered taxi for outlying havelis and desert excursions.', whereToStay: 'Choose a locally run guesthouse in the old city or a licensed stay outside the fort to reduce pressure on its water system.',
     localFlavours: ['Ker sangri', 'Dal baati churma', 'Ghotua laddoo', 'Bajra roti'], nearbyEscapes: ['Kuldhara village', 'Khuri dunes', 'Desert National Park'], planningNotes: ['Desert temperatures swing sharply between day and night.', 'Carry water and sun protection on every outing.', 'Check permits and wildlife guidance for protected desert areas.'],
-  }),
-  curatedPlace({
-    id: 'srinagar', city: 'Srinagar', country: 'India', region: 'Jammu & Kashmir · Kashmir Valley', category: 'Nature', imageId: 'photo-1595815771614-ade9d652a65d',
-    galleryIds: ['photo-1626621331517-bbf3d9990a23', 'photo-1501785888041-af3ef285b470', 'photo-1544735716-392fe2489ffa'],
+  },
+  {
+    id: 'srinagar', city: 'Srinagar', country: 'India', region: 'Jammu & Kashmir · Kashmir Valley', category: 'Nature',
     note: 'Lake mornings, garden walks & mountain air', from: '3–5 days feels right', moments: ['Take a licensed shikara ride on Dal Lake', 'Walk the Mughal gardens', 'Leave a flexible day for a nearby valley'],
     location: 'Srinagar, Jammu & Kashmir, India', coordinates: { lat: 34.0837, lon: 74.7973 }, overview: 'A lake city framed by the Himalaya, with garden walks, old neighborhoods, craft traditions, and seasonal mountain scenery. Check current local travel advisories and road access before planning excursions.',
     bestTime: 'Spring · autumn', language: 'Kashmiri · Urdu · Hindi · English', currency: 'Indian rupee (INR)',
@@ -631,10 +592,9 @@ const indiaAdditions: Destination[] = [
     localTip: 'Check official advisories, weather, and road status before any day trip. Keep plans flexible and follow local guidance.',
     gettingAround: 'Use registered taxis for longer connections; walking and licensed lake boats suit nearby sights.', whereToStay: 'Choose a registered hotel or houseboat with clear transport arrangements and current guest information.',
     localFlavours: ['Rogan josh', 'Yakhni', 'Kahwa', 'Kashmiri breads'], nearbyEscapes: ['Gulmarg', 'Pahalgam', 'Sonamarg'], planningNotes: ['Mountain roads and access can change with weather and local conditions.', 'Confirm any required permissions before travel.', 'Bring layers even in warmer months.'],
-  }),
-  curatedPlace({
-    id: 'ooty', city: 'Ooty & the Nilgiris', country: 'India', region: 'Tamil Nadu · Nilgiri Hills', category: 'Drive & rail', imageId: 'photo-1595815771614-ade9d652a65d',
-    galleryIds: ['photo-1602216056096-3b40cc0c9944', 'photo-1500534623283-312aade485b7', 'photo-1578662996442-48f60103fc96'],
+  },
+  {
+    id: 'ooty', city: 'Ooty & the Nilgiris', country: 'India', region: 'Tamil Nadu · Nilgiri Hills', category: 'Drive & rail',
     note: 'Toy trains, tea gardens & cool hill walks', from: '3–4 days feels right', moments: ['Ride the Nilgiri Mountain Railway', 'Take a tea-estate walk with permission', 'Pause at a viewpoint when the clouds lift'],
     location: 'Ooty, Tamil Nadu, India', coordinates: { lat: 11.4102, lon: 76.695 }, overview: 'A cool-climate hill town in the Nilgiris, known for its mountain railway, gardens, tea country, and winding roads. Travel slowly through the hills and respect local community and forest rules.',
     bestTime: 'October · June · check monsoon conditions', language: 'Tamil · Badaga · English', currency: 'Indian rupee (INR)',
@@ -646,10 +606,9 @@ const indiaAdditions: Destination[] = [
     localTip: 'Avoid littering and loud music in the hills; follow forest and wildlife rules, especially near protected areas.',
     gettingAround: 'Walk central Ooty, use local taxis for spread-out sights, and use the heritage train for the longer mountain rail experience.', whereToStay: 'Stay in central Ooty for rail and bus connections, or choose Coonoor for a quieter tea-country base.',
     localFlavours: ['Ooty chocolates', 'Nilgiri tea', 'Toda-style dishes', 'Fresh vegetable soups'], nearbyEscapes: ['Coonoor', 'Kotagiri', 'Mudumalai'], planningNotes: ['Mountain train seats and schedules can be limited.', 'Fog and rain affect road visibility.', 'Check park entry rules and avoid feeding wildlife.'],
-  }),
-  curatedPlace({
-    id: 'spiti', city: 'Spiti Valley', country: 'India', region: 'Himachal Pradesh · Trans-Himalaya', category: 'Trek & trails', imageId: 'photo-1581793745862-99fde7fa73d2',
-    galleryIds: ['photo-1519681393784-d120267933ba', 'photo-1472396961693-142e6e269027', 'photo-1501785888041-af3ef285b470'],
+  },
+  {
+    id: 'spiti', city: 'Spiti Valley', country: 'India', region: 'Himachal Pradesh · Trans-Himalaya', category: 'Trek & trails',
     note: 'High desert villages, monasteries & big skies', from: '6–9 days feels right', moments: ['Build in acclimatization days', 'Visit a monastery with local guidance', 'Keep road plans flexible for weather'],
     location: 'Kaza, Spiti Valley, Himachal Pradesh, India', coordinates: { lat: 32.227, lon: 78.071 }, overview: 'A remote high-altitude valley of Buddhist monasteries, small villages, stark peaks, and long mountain drives. The journey is as important as the sights; plan for altitude, limited services, and road changes.',
     bestTime: 'Summer road season · verify current access', language: 'Spitian · Hindi · English', currency: 'Indian rupee (INR)',
@@ -661,10 +620,9 @@ const indiaAdditions: Destination[] = [
     localTip: 'This is high-altitude travel with limited medical services. Acclimatize carefully, carry essentials, and follow local road advisories.',
     gettingAround: 'Distances are long; use a reliable local driver and confirm fuel, road, and weather conditions each day.', whereToStay: 'Use Kaza for services, then registered homestays in villages for a slower visit and local benefit.',
     localFlavours: ['Thukpa', 'Momos', 'Butter tea', 'Tsampa'], nearbyEscapes: ['Tabo', 'Pin Valley', 'Dhankar'], planningNotes: ['Do not rush to high villages immediately after arriving.', 'Road access varies by season and weather.', 'Carry warm layers, sun protection, water, and any needed medication.'],
-  }),
-  curatedPlace({
-    id: 'andaman', city: 'Andaman Islands', country: 'India', region: 'Bay of Bengal · Andaman Sea', category: 'Coast', imageId: 'photo-1519046904884-53103b34b206',
-    galleryIds: ['photo-1500375592092-40eb2168fd21', 'photo-1512343879784-a960bf40e7f2', 'photo-1507525428034-b723cf961d3e'],
+  },
+  {
+    id: 'andaman', city: 'Andaman Islands', country: 'India', region: 'Bay of Bengal · Andaman Sea', category: 'Coast',
     note: 'Quiet beaches, coral reefs & island crossings', from: '5–7 days feels right', moments: ['Reserve ferries before you move between islands', 'Choose a permitted reef guide', 'Leave a weather buffer before your flight'],
     location: 'Sri Vijaya Puram (Port Blair), Andaman and Nicobar Islands, India', coordinates: { lat: 11.6234, lon: 92.7265 }, overview: 'A tropical island group for beach days, marine life, and history. Ferry schedules, weather, permits, and protected-area rules shape what is possible, so build flexibility into every island transfer.',
     bestTime: 'November · April · check monsoon seas', language: 'Hindi · Bengali · Tamil · English', currency: 'Indian rupee (INR)',
@@ -676,10 +634,9 @@ const indiaAdditions: Destination[] = [
     localTip: 'Respect protected and Indigenous communities and all restricted-area boundaries. Do not fly drones or enter restricted islands without permission.',
     gettingAround: 'Use official ferries between islands and licensed local taxis or transfers on each island; confirm luggage and check-in rules.', whereToStay: 'Choose a base near your ferry point, and allow an overnight buffer before flights where possible.',
     localFlavours: ['Fresh fish curry', 'Coconut dishes', 'Tropical fruit', 'Local seafood thalis'], nearbyEscapes: ['Baratang', 'Neil Island', 'Mahatma Gandhi Marine National Park'], planningNotes: ['Ferries and flights can be disrupted by weather.', 'Book official ferry seats and entry permits in advance where required.', 'Use reef-safe behavior and take all waste back with you.'],
-  }),
-  curatedPlace({
-    id: 'rann-of-kutch', city: 'Rann of Kutch', country: 'India', region: 'Gujarat · Kutch district', category: 'Nature', imageId: 'photo-1509316785289-025f5b846b35',
-    galleryIds: ['photo-1500530855697-b586d89ba3ee', 'photo-1590089415225-401ed6f9db8e', 'photo-1500534623283-312aade485b7'],
+  },
+  {
+    id: 'rann-of-kutch', city: 'Rann of Kutch', country: 'India', region: 'Gujarat · Kutch district', category: 'Nature',
     note: 'White salt flats, craft villages & open desert', from: '3–5 days feels right', moments: ['Check the Rann permit before departure', 'Visit a craft village with a local host', 'Plan for a wide temperature swing after sunset'],
     location: 'Dhordo, Kutch, Gujarat, India', coordinates: { lat: 23.7337, lon: 69.8597 }, overview: 'A vast salt-marsh landscape and craft-rich region with long distances between villages. The seasonal Rann festival and border-area rules affect access; plan transport and permissions in advance.',
     bestTime: 'Cool season · check festival dates and access', language: 'Gujarati · Kutchi · Hindi', currency: 'Indian rupee (INR)',
@@ -691,75 +648,19 @@ const indiaAdditions: Destination[] = [
     localTip: 'Respect border-area rules and local community photography preferences; always ask before photographing artisans or residents.',
     gettingAround: 'Hire a reliable local driver for the large distances; confirm fuel and return plans before leaving town.', whereToStay: 'Bhuj is a useful base for services; licensed village stays near Dhordo suit a festival visit.',
     localFlavours: ['Kutchi dabeli', 'Bajra rotla', 'Khichdi', 'Local sweets'], nearbyEscapes: ['Bhuj', 'Mandvi coast', 'Dholavira'], planningNotes: ['Carry identity documents for any required permits.', 'The salt flats are exposed; bring water, sun protection, and warm night layers.', 'Festival dates, access, and road conditions change each season.'],
-  }),
+  },
 ]
 
-const indiaPhotoAdditions: Record<string, string[]> = {
-  darjeeling: ['photo-1578662996442-48f60103fc96', 'photo-1500534623283-312aade485b7'],
-  shimla: ['photo-1500530855697-b586d89ba3ee', 'photo-1470770841072-f978cf4d019e'],
-  ladakh: ['photo-1501785888041-af3ef285b470', 'photo-1509316785289-025f5b846b35'],
-  manali: ['photo-1472396961693-142e6e269027', 'photo-1464822759023-fed622ff2c3b'],
-  rishikesh: ['photo-1500534623283-312aade485b7', 'photo-1544735716-392fe2489ffa'],
-  munnar: ['photo-1595815771614-ade9d652a65d', 'photo-1500534623283-312aade485b7'],
-  goa: ['photo-1500375592092-40eb2168fd21', 'photo-1519046904884-53103b34b206'],
-  alleppey: ['photo-1593693397690-362cb9666fc2', 'photo-1602216056096-3b40cc0c9944'],
-  meghalaya: ['photo-1598091383021-15ddea10925d', 'photo-1470770841072-f978cf4d019e'],
-}
+const indiaSeed: PlaceSeed[] = [...indiaSeedBase, ...indiaAdditions, ...moreIndiaPlaces]
 
-const indiaSeed: Destination[] = [...indiaSeedBase, ...indiaAdditions].map((destination) => ({
-  ...destination,
-  gallery: destination.gallery?.length
-    ? destination.gallery
-    : [destination.image, ...(indiaPhotoAdditions[destination.id] ?? []).map(destinationPhoto)],
-}))
-
-type CommonsPhoto = { src: string; credit: { label: string; url: string } }
-
-// Replaces the seed photos for guides whose Unsplash photos were missing or showed other places.
-// Entries are Unsplash photo ids or credited Wikimedia Commons photos; the first entry is the cover.
-const verifiedGalleries: Record<string, Array<string | CommonsPhoto>> = {
-  jaipur: [
-    'photo-1599661046827-dacff0c0f09a',
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/East_facade_Hawa_Mahal_Jaipur_from_ground_level_%28July_2022%29_-_img_01.jpg/1280px-East_facade_Hawa_Mahal_Jaipur_from_ground_level_%28July_2022%29_-_img_01.jpg', credit: { label: 'Hawa Mahal · Chainwit. · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:East_facade_Hawa_Mahal_Jaipur_from_ground_level_(July_2022)_-_img_01.jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Amer_Fort_-_Ganesh_Pol_%282022%29_-_img_01.jpg/1280px-Amer_Fort_-_Ganesh_Pol_%282022%29_-_img_01.jpg', credit: { label: 'Ganesh Pol, Amer Fort · Chainwit. · CC BY 4.0', url: 'https://commons.wikimedia.org/wiki/File:Amer_Fort_-_Ganesh_Pol_(2022)_-_img_01.jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Jaipur_03-2016_39_Jal_Mahal_-_Water_Palace.jpg/1280px-Jaipur_03-2016_39_Jal_Mahal_-_Water_Palace.jpg', credit: { label: 'Jal Mahal · A.Savin · FAL', url: 'https://commons.wikimedia.org/wiki/File:Jaipur_03-2016_39_Jal_Mahal_-_Water_Palace.jpg' } },
-  ],
-  hampi: [
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Complex_of_Virupaksha_Temple%2C_Hampi_%2801%29.jpg/1280px-Complex_of_Virupaksha_Temple%2C_Hampi_%2801%29.jpg', credit: { label: 'Virupaksha Temple · iMahesh · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Complex_of_Virupaksha_Temple,_Hampi_(01).jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Hampi_-_Vittala_Temple_-_Entrance_Gopuram.jpg/1280px-Hampi_-_Vittala_Temple_-_Entrance_Gopuram.jpg', credit: { label: 'Vittala Temple gopuram · Ingo Mehling · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Hampi_-_Vittala_Temple_-_Entrance_Gopuram.jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Krishna_Pushkarani_-_Hampi_Ruins.jpg/1280px-Krishna_Pushkarani_-_Hampi_Ruins.jpg', credit: { label: 'Krishna Pushkarani · Dey.sandip · CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Krishna_Pushkarani_-_Hampi_Ruins.jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/PAN_SUPARI_BAZAAR.jpg/1280px-PAN_SUPARI_BAZAAR.jpg', credit: { label: 'Hampi Bazaar · Basavarajmin21 · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:PAN_SUPARI_BAZAAR.jpg' } },
-  ],
-  sikkim: [
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Gurudongmar_Lake_Sikkim%2C_India_%28edit%29.jpg/1280px-Gurudongmar_Lake_Sikkim%2C_India_%28edit%29.jpg', credit: { label: 'Gurudongmar Lake · UnpetitproleX, after Yoghya · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Gurudongmar_Lake_Sikkim,_India_(edit).jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/View_of_Gangtok_City_from_Crown_Prince_Tenzing_Kunzang_Namgyal_Walkway.jpg/1280px-View_of_Gangtok_City_from_Crown_Prince_Tenzing_Kunzang_Namgyal_Walkway.jpg', credit: { label: 'Gangtok · Subhrajyoti07 · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:View_of_Gangtok_City_from_Crown_Prince_Tenzing_Kunzang_Namgyal_Walkway.jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Buddha_statue_at_Buddha_Park_of_Ravangla%2C_Sikkim%2C_India_%281%29.jpg/1280px-Buddha_statue_at_Buddha_Park_of_Ravangla%2C_Sikkim%2C_India_%281%29.jpg', credit: { label: 'Buddha Park, Ravangla · Joydeep · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Buddha_statue_at_Buddha_Park_of_Ravangla,_Sikkim,_India_(1).jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Ralang_monastery_sikkim_1.jpg/1280px-Ralang_monastery_sikkim_1.jpg', credit: { label: 'Ralang Monastery · Joydeep · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Ralang_monastery_sikkim_1.jpg' } },
-  ],
-  varanasi: [
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Varanasi_2010_Ahilyabai_Ghat.jpg/1280px-Varanasi_2010_Ahilyabai_Ghat.jpg', credit: { label: 'Ahilyabai Ghat · Marcin Białek · CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Varanasi_2010_Ahilyabai_Ghat.jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/India_-_Varanasi_puja_ceremony_-_1772.jpg/1280px-India_-_Varanasi_puja_ceremony_-_1772.jpg', credit: { label: 'Ganga aarti · Jorge Royan · CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:India_-_Varanasi_puja_ceremony_-_1772.jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Varanasi_Munshi_Ghat3.jpg/1280px-Varanasi_Munshi_Ghat3.jpg', credit: { label: 'Munshi Ghat · Marcin Białek · CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Varanasi_Munshi_Ghat3.jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Varanasi_2010_ghats4.JPG/1280px-Varanasi_2010_ghats4.JPG', credit: { label: 'Ghats from the river · Marcin Białek · CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Varanasi_2010_ghats4.JPG' } },
-  ],
-  kyoto: [
-    'photo-1493976040374-85c8e12f0c0e',
-    'photo-1478436127897-769e1b3f0f36',
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Kiyomizu-dera%2C_Kyoto%2C_November_2016_-02.jpg/1280px-Kiyomizu-dera%2C_Kyoto%2C_November_2016_-02.jpg', credit: { label: 'Kiyomizu-dera · Martin Falbisoner · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Kiyomizu-dera,_Kyoto,_November_2016_-02.jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Golden_Pavilion_Kinkaku-ji_2024.jpg/1280px-Golden_Pavilion_Kinkaku-ji_2024.jpg', credit: { label: 'Kinkaku-ji · Nacaru · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Golden_Pavilion_Kinkaku-ji_2024.jpg' } },
-    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Wooden_and_bamboo_facades_of_dwellings_with_sudare_in_a_cobbled_street_of_Gion%2C_perspective_effect_with_vanishing_point%2C_Kyoto%2C_Japan.jpg/1280px-Wooden_and_bamboo_facades_of_dwellings_with_sudare_in_a_cobbled_street_of_Gion%2C_perspective_effect_with_vanishing_point%2C_Kyoto%2C_Japan.jpg', credit: { label: 'Gion lane · Basile Morin · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Wooden_and_bamboo_facades_of_dwellings_with_sudare_in_a_cobbled_street_of_Gion,_perspective_effect_with_vanishing_point,_Kyoto,_Japan.jpg' } },
-  ],
-}
-
-function withVerifiedGallery(destination: Destination): Destination {
-  const photos = verifiedGalleries[destination.id]
-  if (!photos) return destination
-  const gallery = photos.map((photo) => typeof photo === 'string' ? destinationPhoto(photo) : photo.src)
+function withPhotos(place: PlaceSeed): Destination {
+  const photos = placePhotos[place.id] ?? []
+  const gallery = photos.length ? photos.map((photo) => typeof photo === 'string' ? destinationPhoto(photo) : photo.src) : [fallbackTravelImage]
   const galleryAttributions = photos.map((photo) => typeof photo === 'string' ? null : photo.credit)
-  return { ...destination, image: gallery[0], gallery, galleryAttributions }
+  return { ...place, image: gallery[0], gallery, galleryAttributions }
 }
 
-const destinationSeed: Destination[] = [...indiaSeed, ...foreignSeed].map(withVerifiedGallery)
+const destinationSeed: Destination[] = [...indiaSeed, ...foreignSeed].map(withPhotos)
 
 const categories: Category[] = ['All', 'Drive & rail', 'Trek & trails', 'Coast', 'Culture', 'Nature', 'Slow living']
 const heroImage = 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=2200&q=90'
@@ -1461,10 +1362,10 @@ function App() {
         body="Take the mountain road, catch a little train, find a trail, or stay by the sea. Plan India your way, one good stop at a time."
         primaryCta={{ label: 'Plan your India trip', href: '#/planner' }}
         secondaryCta={{ label: 'Explore India', href: '#/places' }}
-        background="#f7f5ee"
-        darkBackground="#183b3b"
-        textColor="#203b3b"
-        accentColor="#c58a43"
+        background="#fbf4e8"
+        darkBackground="#14304a"
+        textColor="#14304a"
+        accentColor="#e2682b"
         height="min(860px, 100svh)"
         sculptureScale={0.92}
         mobileSculptureScale={1.15}
@@ -1538,7 +1439,7 @@ function App() {
 
           <div className="category-row" role="group" aria-label="Filter destinations by feeling">
             {categories.map((item) => (
-              <button key={item} type="button" className={`category-pill ${category === item ? 'active' : ''}`} onClick={() => setCategory(item)} aria-pressed={category === item}>
+              <button key={item} type="button" className={`category-pill ${category === item ? 'active' : ''}`} data-category={item} onClick={() => setCategory(item)} aria-pressed={category === item}>
                 {item}
               </button>
             ))}
@@ -1550,7 +1451,7 @@ function App() {
               {filteredDestinations.map((destination, index) => {
                 const isPicked = pickedIds.includes(destination.id)
                 return (
-                  <article className={`destination-card destination-card-${index % 3}`} key={destination.id}>
+                  <article className={`destination-card destination-card-${index % 3}`} data-category={destination.category} key={destination.id}>
                     <div className="destination-visual">
                       <a className="destination-photo" href={`#/place/${encodeURIComponent(destination.id)}`} style={{ backgroundImage: `url("${destination.image}"), url("${fallbackTravelImage}")` }} aria-label={`Open the ${destination.city}, ${destination.country} travel guide`}>
                         <div className="photo-shade" />
