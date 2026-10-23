@@ -55,7 +55,8 @@ type WeatherSummary = {
   forecast: Array<{ date: string; weatherCode: number; high: number; low: number; precipitationChance: number | null }>
 }
 
-const fallbackPlacePhoto = 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1400&q=85'
+// Gallery buttons load a small Wikimedia thumbnail instead of the full 1280px photo.
+const thumbnailPhoto = (src: string) => src.replace(/\/1280px-/, '/330px-')
 
 function weatherDescription(code: number | null) {
   if (code === 0) return { label: 'Clear', icon: Sun }
@@ -134,13 +135,13 @@ export default function DestinationGuide({ destination, isPicked, onClose, onTog
 
         <div className="guide-layout">
           <div className="guide-gallery-column">
-            <div className="guide-main-photo" style={{ backgroundImage: `url("${photos[activePhoto]}"), url("${fallbackPlacePhoto}")` }} role="img" aria-label={`${destination.city} travel photo ${activePhoto + 1}`}>
+            <div className="guide-main-photo" style={{ backgroundImage: `url("${photos[activePhoto]}")` }} role="img" aria-label={`${destination.city} travel photo ${activePhoto + 1}`}>
               <span className="guide-photo-count">{String(activePhoto + 1).padStart(2, '0')} / {String(photos.length).padStart(2, '0')}</span>
             </div>
             {photos.length > 1 && (
               <div className="guide-thumbnails" aria-label="Place photo gallery">
                 {photos.map((photo, index) => (
-                  <button key={`${photo}-${index}`} className={`guide-thumbnail ${index === activePhoto ? 'active' : ''}`} type="button" onClick={() => setActivePhoto(index)} aria-label={`Show photo ${index + 1}`} aria-pressed={index === activePhoto} style={{ backgroundImage: `url("${photo}"), url("${fallbackPlacePhoto}")` }} />
+                  <button key={`${photo}-${index}`} className={`guide-thumbnail ${index === activePhoto ? 'active' : ''}`} type="button" onClick={() => setActivePhoto(index)} aria-label={`Show photo ${index + 1}`} aria-pressed={index === activePhoto} style={{ backgroundImage: `url("${thumbnailPhoto(photo)}")` }} />
                 ))}
               </div>
             )}
