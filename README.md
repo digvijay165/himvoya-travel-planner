@@ -1,5 +1,7 @@
 # Himvoya — India-first Travel Planner
 
+[Visit the live website](https://himvoya-travel-planner.onrender.com/)
+
 A responsive, multi-page travel planner built with React, TypeScript, Tailwind CSS, Vite, Express, and SQLite. India is the featured destination collection; a separate Foreign Places page searches worldwide cities and towns. It uses the supplied Liquid Sculpture hero component in `src/components/ui`.
 
 ## Run in development
