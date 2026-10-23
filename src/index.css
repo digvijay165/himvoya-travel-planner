@@ -48,6 +48,8 @@ a { color: inherit; }
 .header-nav a::after { position: absolute; right: 0; bottom: 3px; left: 0; height: 1px; background: var(--rust); content: ''; transform: scaleX(0); transform-origin: left; transition: transform .18s; }
 .header-nav a:hover, .header-nav a.active { color: var(--ink); }
 .header-nav a.active::after, .header-nav a:hover::after { transform: scaleX(1); }
+.header-nav .header-github { display: inline-flex; align-items: center; gap: 5px; }
+.header-nav .header-github svg { flex: 0 0 auto; color: var(--rust); }
 .header-account { display: inline-flex; justify-self: end; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid #d6d8cf; color: var(--ink); font-size: 10px; text-decoration: none; transition: color .18s, border-color .18s, background .18s; }
 .header-account svg { color: var(--rust); }
 .header-account:hover { border-color: var(--forest); background: var(--forest); color: white; }
