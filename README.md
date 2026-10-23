@@ -20,9 +20,13 @@ npm start
 
 The Node server serves the built frontend and `/api` from one origin. Set `PORT` to change the listening port or `ROAM_DB_PATH` to store the SQLite database at another path.
 
-## Deploy to Render
+## Deploy to Render Free
 
-The repository includes a `render.yaml` Blueprint for the Node web service. It mounts a 1 GB persistent disk at `/var/data` and stores SQLite there so accounts and trips survive deploys and restarts. Apply the Blueprint from Render after connecting this repository. The service needs the Resend and Cloudflare Turnstile values listed below; Render prompts for them during setup. Enter secret values in Render, never in GitHub.
+The repository includes a Render Blueprint for a free Node web service. Apply it from Render after connecting this repository. The service uses `/tmp/travel-planner.sqlite` because Free services cannot attach persistent disks. **Render Free clears local files when the service sleeps, restarts, or redeploys, so saved accounts and trips can be lost.** The service also sleeps after 15 minutes without traffic and can take about a minute to wake. This deployment is suitable for a public demo, not for storing important user data.
+
+After the service gets its public URL, set `ROAM_PUBLIC_URL` to that HTTPS address. To enable account registration, email verification, and password reset, add `RESEND_API_KEY`, `ROAM_EMAIL_FROM`, `ROAM_TURNSTILE_SITE_KEY`, and `ROAM_TURNSTILE_SECRET_KEY` in the Render service settings. Configure Turnstile for the assigned hostname. Add optional `ROAM_ADMIN_TOKEN` only if you need the private analytics endpoint. Keep secrets in Render, never in GitHub.
+
+See [Render's free-service limits](https://render.com/docs/free) and [persistent disk pricing](https://render.com/docs/disks). Durable SQLite storage requires a paid Render service with a persistent disk.
 
 ## API
 
