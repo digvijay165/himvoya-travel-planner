@@ -3,17 +3,19 @@
 </p>
 
 <p align="center">
-  <a href="https://himvoya-travel-planner.onrender.com/"><img alt="Live demo" src="https://img.shields.io/badge/live_demo-himvoya-183b3b?style=for-the-badge&logo=render&logoColor=white"></a>
-  <img alt="React 19" src="https://img.shields.io/badge/react-19-203b3b?style=for-the-badge&logo=react&logoColor=white">
-  <img alt="TypeScript" src="https://img.shields.io/badge/typescript-6-3d5f5c?style=for-the-badge&logo=typescript&logoColor=white">
-  <img alt="Tailwind CSS 4" src="https://img.shields.io/badge/tailwind-4-c58a43?style=for-the-badge&logo=tailwindcss&logoColor=white">
-  <img alt="Node.js 24.15+" src="https://img.shields.io/badge/node-%E2%89%A524.15-71807a?style=for-the-badge&logo=nodedotjs&logoColor=white">
+  <a href="https://himvoya-travel-planner.onrender.com/"><img alt="Live demo" src="https://img.shields.io/badge/live_demo-himvoya-e2682b?style=for-the-badge&logo=render&logoColor=white"></a>
+  <img alt="React 19" src="https://img.shields.io/badge/react-19-14304a?style=for-the-badge&logo=react&logoColor=white">
+  <img alt="TypeScript" src="https://img.shields.io/badge/typescript-6-1a8e96?style=for-the-badge&logo=typescript&logoColor=white">
+  <img alt="Tailwind CSS 4" src="https://img.shields.io/badge/tailwind-4-f2a53a?style=for-the-badge&logo=tailwindcss&logoColor=white">
+  <img alt="Node.js 24.15+" src="https://img.shields.io/badge/node-%E2%89%A524.15-2e7d57?style=for-the-badge&logo=nodedotjs&logoColor=white">
 </p>
 
 <p align="center">
   <b><a href="https://himvoya-travel-planner.onrender.com/">Open the live site</a></b> ·
   <a href="#-features">Features</a> ·
+  <a href="#%EF%B8%8F-treks">Treks</a> ·
   <a href="#-screenshots">Screenshots</a> ·
+  <a href="#-design">Design</a> ·
   <a href="#-quick-start">Quick start</a> ·
   <a href="#%EF%B8%8F-deploy-to-render">Deploy</a> ·
   <a href="#-api">API</a>
@@ -21,7 +23,7 @@
 
 ---
 
-**Himvoya** is an India-first travel planner. Browse hand-written guides to 92 Indian destinations, from Himalayan treks and heritage railways to Kerala backwaters and tiger reserves, or search any city or town in the world. Each guide comes with photos, a map, a five-day forecast and ideas for what to see, eat and where to stay. Pick a few places and the trip planner sketches the days in between.
+**Himvoya** is an India-first travel planner. Browse hand-written guides to 106 destinations, 92 of them in India, from Himalayan treks and heritage railways to Kerala backwaters and tiger reserves, or search any city or town in the world. Each guide comes with photos, a map, a five-day forecast and ideas for what to see, eat and where to stay. Pick a few places and the trip planner sketches the days in between.
 
 It is a React + TypeScript frontend and a small Express API in one Node process, storing accounts and trips in Node's built-in SQLite.
 
@@ -90,6 +92,21 @@ It is a React + TypeScript frontend and a small Express API in one Node process,
 </tr>
 </table>
 
+## 🏔️ Treks
+
+Thirty mountain treks, from weekend walks to high-altitude crossings, each with the route, best season, permits and safety notes.
+
+| Easy to moderate | Moderate | Challenging |
+| --- | --- | --- |
+| Rishikesh · Shillong & Meghalaya · Triund · Nag Tibba · Prashar Lake · Kheerganga · Chopta & Tungnath · Dzukou Valley · Kalsubai · Chembra Peak | Manali · Kedarkantha · Brahmatal · Dayara Bugyal · Kuari Pass · Hampta Pass · Har Ki Dun · Valley of Flowers · Sandakphu · Kudremukh · Harishchandragad | Kashmir Great Lakes · Tarsar Marsar · Roopkund · Goecha La · Markha Valley · Bhrigu Lake · Kedarnath · Leh & Ladakh · Spiti Valley |
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/treks.jpg" alt="Explore India filtered to Trek & trails"><p align="center"><sub><b>Filter by mood</b>: 30 treks, colour-coded green</sub></p></td>
+<td width="50%"><img src="docs/screenshots/trek.jpg" alt="The Kashmir Great Lakes trek guide"><p align="center"><sub><b>Trek guide</b>: Kashmir Great Lakes, with live weather</sub></p></td>
+</tr>
+</table>
+
 ## 📸 Screenshots
 
 <table>
@@ -110,6 +127,23 @@ It is a React + TypeScript frontend and a small Express API in one Node process,
 </td>
 </tr>
 </table>
+
+## 🎨 Design
+
+A warm travel palette drawn from India itself, defined in [`src/theme.css`](src/theme.css):
+
+<p>
+  <img alt="Saffron" src="https://img.shields.io/badge/saffron-%23e2682b-e2682b?style=flat-square">
+  <img alt="Marigold" src="https://img.shields.io/badge/marigold-%23f2a53a-f2a53a?style=flat-square">
+  <img alt="Terracotta" src="https://img.shields.io/badge/terracotta-%23c2553a-c2553a?style=flat-square">
+  <img alt="Sea teal" src="https://img.shields.io/badge/sea_teal-%231a8e96-1a8e96?style=flat-square">
+  <img alt="Indigo" src="https://img.shields.io/badge/indigo-%2314304a-14304a?style=flat-square">
+  <img alt="Sand" src="https://img.shields.io/badge/sand-%23fbf4e8-fbf4e8?style=flat-square&labelColor=8a7a60">
+</p>
+
+- Each mood has its own colour: **drive & rail** blue, **trek & trails** green, **coast** teal, **culture** terracotta, **nature** leaf and **slow living** gold.
+- Rounded photo cards with soft shadows, a sunrise gradient on buttons, and a night-sky planner.
+- Playfair Display for headings and DM Sans for text.
 
 ## 🚀 Quick start
 
