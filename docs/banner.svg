@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400" role="img" aria-labelledby="title desc">
+  <title id="title">Himvoya</title>
+  <desc id="desc">Himvoya: India is waiting for you. An India-first travel planner with destination guides, live weather and a day-by-day trip planner.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1d4545"/>
+      <stop offset="1" stop-color="#132f2f"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f3d9b5"/>
+      <stop offset="1" stop-color="#e3a873"/>
+    </linearGradient>
+    <linearGradient id="far" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fa8a0"/><stop offset="1" stop-color="#5f7d77"/></linearGradient>
+    <linearGradient id="mid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f6662"/><stop offset="1" stop-color="#2a4c4a"/></linearGradient>
+    <linearGradient id="near" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f3d3c"/><stop offset="1" stop-color="#173232"/></linearGradient>
+    <clipPath id="card"><rect x="720" y="56" width="472" height="288" rx="16"/></clipPath>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#06100f" flood-opacity=".45"/></filter>
+  </defs>
+
+  <rect width="1280" height="400" rx="18" fill="url(#bg)"/>
+  <circle cx="110" cy="430" r="300" fill="none" stroke="#d9e2d8" stroke-opacity=".07"/>
+  <circle cx="1210" cy="-60" r="340" fill="none" stroke="#d9e2d8" stroke-opacity=".07"/>
+
+  <!-- Wordmark -->
+  <g transform="translate(88 78)">
+    <rect width="54" height="54" rx="15" fill="#f7f5ee"/>
+    <circle cx="27" cy="27" r="17" fill="none" stroke="#183b3b" stroke-width="1.6"/>
+    <path d="m35 18-4.6 11.6L19 35l4.6-11.6L35 18Z" fill="#c58a43" stroke="#183b3b" stroke-linejoin="round" stroke-width="1.4"/>
+    <circle cx="27" cy="27" r="2.2" fill="#183b3b"/>
+    <text x="72" y="38" font-family="'Playfair Display', Georgia, 'Times New Roman', serif" font-size="34" font-weight="500" fill="#f7f5ee">Himvoya <tspan fill="#c58a43">/</tspan></text>
+  </g>
+
+  <text x="88" y="214" font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-size="58" font-weight="600" fill="#f7f5ee" letter-spacing="-2">India is</text>
+  <text x="88" y="284" font-family="'Playfair Display', Georgia, 'Times New Roman', serif" font-size="62" font-style="italic" fill="#d9a066" letter-spacing="-1.5">waiting<tspan font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-style="normal" font-weight="600" font-size="58" fill="#f7f5ee" letter-spacing="-2"> for you.</tspan></text>
+  <text x="90" y="332" font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-size="17" fill="#a9bbb4" letter-spacing=".6">34 destination guides · live weather &amp; maps · a day-by-day trip planner</text>
+
+  <!-- A postcard: hills at dusk, a winding route with stops -->
+  <g filter="url(#shadow)">
+    <rect x="720" y="56" width="472" height="288" rx="16" fill="url(#sky)"/>
+  </g>
+  <g clip-path="url(#card)">
+    <rect x="720" y="56" width="472" height="288" fill="url(#sky)"/>
+    <circle cx="1060" cy="150" r="34" fill="#fbe9cf"/>
+    <path d="M720 214 L790 160 L838 192 L900 128 L962 184 L1010 150 L1072 196 L1130 142 L1192 182 V344 H720 Z" fill="url(#far)"/>
+    <path d="M900 128 L918 145 L908 143 L900 152 L892 142 L884 146 Z M1130 142 L1146 157 L1137 156 L1130 163 L1122 155 L1115 158 Z" fill="#f7f5ee" fill-opacity=".85"/>
+    <path d="M720 254 C780 226 830 236 880 218 C940 196 990 230 1050 214 C1110 198 1150 222 1192 210 V344 H720 Z" fill="url(#mid)"/>
+    <path d="M720 296 C800 270 860 290 940 272 C1020 254 1090 284 1192 262 V344 H720 Z" fill="url(#near)"/>
+    <g fill="#132f2f">
+      <path d="M760 296 l9 -30 l9 30 Z M776 300 l7 -22 l7 22 Z"/>
+      <path d="M1140 276 l10 -34 l10 34 Z M1158 282 l8 -24 l8 24 Z"/>
+    </g>
+    <path d="M790 330 C850 318 840 284 900 276 S990 288 1010 252 S1080 226 1110 236" fill="none" stroke="#f7f5ee" stroke-width="2.4" stroke-dasharray="2 8" stroke-linecap="round"/>
+    <g>
+      <circle cx="790" cy="330" r="7" fill="#c58a43" stroke="#f7f5ee" stroke-width="2.5"/>
+      <circle cx="1010" cy="252" r="7" fill="#c58a43" stroke="#f7f5ee" stroke-width="2.5"/>
+      <path d="M1110 214 c-10 0 -17 7 -17 16 c0 12 17 28 17 28 s17 -16 17 -28 c0 -9 -7 -16 -17 -16 Z" fill="#f7f5ee"/>
+      <circle cx="1110" cy="230" r="6" fill="#c58a43"/>
+    </g>
+    <rect x="744" y="80" width="140" height="30" rx="15" fill="#132f2f" fill-opacity=".55"/>
+    <text x="814" y="100" text-anchor="middle" font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-size="12" font-weight="600" fill="#f7f5ee" letter-spacing="1.8">DRIVE &amp; RAIL</text>
+  </g>
+
+  <!-- Day chip pinned to the card -->
+  <g filter="url(#shadow)" transform="translate(1060 292)">
+    <rect width="168" height="76" rx="12" fill="#f7f5ee"/>
+    <text x="18" y="30" font-family="'DM Sans', 'Segoe UI', Arial, sans-serif" font-size="11" font-weight="600" fill="#c58a43" letter-spacing="1.6">DAY 02</text>
+    <text x="18" y="56" font-family="'Playfair Display', Georgia, serif" font-size="20" fill="#203b3b">Toy train up</text>
+  </g>
+</svg>
