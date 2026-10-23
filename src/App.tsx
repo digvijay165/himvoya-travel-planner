@@ -83,7 +83,6 @@ const foreignSeedBase: Destination[] = [
     bestTime: 'Spring · autumn',
     language: 'Japanese',
     currency: 'Japanese yen (JPY)',
-    gallery: ['photo-1528360983277-13d401cdc186', 'photo-1478436127897-769e1b3f0f36', 'photo-1503899036084-c55cdd92da26'].map(destinationPhoto),
     highlights: [
       { name: 'Fushimi Inari Taisha', area: 'Fushimi', kind: 'Shrine & hillside walk', description: 'Follow the long paths beneath rows of vermilion torii gates; turn around whenever the walk feels right.', time: '2–3 hours' },
       { name: 'Kiyomizu-dera', area: 'Higashiyama', kind: 'Temple & city view', description: 'See the celebrated wooden veranda and the rooftops spread across Kyoto below.', time: '1–2 hours' },
@@ -405,7 +404,6 @@ const foreignAdditions: Destination[] = [
 ]
 
 const foreignPhotoAdditions: Record<string, string[]> = {
-  kyoto: ['photo-1493976040374-85c8e12f0c0e', 'photo-1492571350019-22de08371fd3'],
   amalfi: ['photo-1516483638261-f4dbaf036963', 'photo-1533105079780-92b9be482077'],
   lisbon: ['photo-1555881400-89b8dc2bf8f4', 'photo-1555881400-74d7acaacd8b'],
   bali: ['photo-1530789253388-582c481c54b0', 'photo-1518548419970-58e3b4079ab2'],
@@ -525,7 +523,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'hampi', city: 'Hampi', country: 'India', region: 'Karnataka · Deccan plateau', category: 'Culture',
-    image: 'https://images.unsplash.com/photo-1606293926075-4c5b1ce8ef2d?auto=format&fit=crop&w=1200&q=85', note: 'Ancient ruins, boulder trails & sunrise rides', from: '2–3 days feels right',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Complex_of_Virupaksha_Temple%2C_Hampi_%2801%29.jpg/1280px-Complex_of_Virupaksha_Temple%2C_Hampi_%2801%29.jpg', note: 'Ancient ruins, boulder trails & sunrise rides', from: '2–3 days feels right',
     moments: ['Cycle between the temple ruins', 'Walk the riverside paths with a guide', 'Catch the evening light over the boulder landscape'], location: 'Hampi, Karnataka, India', coordinates: { lat: 15.335, lon: 76.46 },
     overview: 'A remarkable archaeological landscape of temple complexes, river crossings, and granite boulder hills. Respect protected areas and use local guides to understand the site.', bestTime: 'Cooler months · avoid the hottest hours', language: 'Kannada · Telugu · Hindi · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -561,7 +559,7 @@ const indiaSeedBase: Destination[] = [
   },
   {
     id: 'sikkim', city: 'Gangtok & Sikkim', country: 'India', region: 'Eastern Himalaya', category: 'Drive & rail',
-    image: 'https://images.unsplash.com/photo-1619845227428-7b6e3bd4b5e7?auto=format&fit=crop&w=1200&q=85', note: 'Monastery roads, Himalayan views & quiet hikes', from: '5–7 days feels right',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Gurudongmar_Lake_Sikkim%2C_India_%28edit%29.jpg/1280px-Gurudongmar_Lake_Sikkim%2C_India_%28edit%29.jpg', note: 'Monastery roads, Himalayan views & quiet hikes', from: '5–7 days feels right',
     moments: ['Explore Gangtok on foot', 'Take a careful day drive to a monastery', 'Choose a guided forest or mountain walk'], location: 'Gangtok, Sikkim, India', coordinates: { lat: 27.3389, lon: 88.6065 },
     overview: 'A hill-state journey through monasteries, mountain viewpoints, and small towns. Road access, permits, and weather can affect routes, especially near border areas.', bestTime: 'Spring · autumn · check current access', language: 'Nepali · Sikkimese · Hindi · English', currency: 'Indian rupee (INR)',
     highlights: [
@@ -704,11 +702,8 @@ const indiaPhotoAdditions: Record<string, string[]> = {
   rishikesh: ['photo-1500534623283-312aade485b7', 'photo-1544735716-392fe2489ffa'],
   munnar: ['photo-1595815771614-ade9d652a65d', 'photo-1500534623283-312aade485b7'],
   goa: ['photo-1500375592092-40eb2168fd21', 'photo-1519046904884-53103b34b206'],
-  jaipur: ['photo-1564507592333-c60657eea523', 'photo-1524492412937-b28074a5d7da'],
-  hampi: ['photo-1606293926075-69a00dbfde81', 'photo-1548013146-72479768bada'],
   alleppey: ['photo-1593693397690-362cb9666fc2', 'photo-1602216056096-3b40cc0c9944'],
   meghalaya: ['photo-1598091383021-15ddea10925d', 'photo-1470770841072-f978cf4d019e'],
-  sikkim: ['photo-1501785888041-af3ef285b470', 'photo-1578662996442-48f60103fc96'],
 }
 
 const indiaSeed: Destination[] = [...indiaSeedBase, ...indiaAdditions].map((destination) => ({
@@ -718,7 +713,53 @@ const indiaSeed: Destination[] = [...indiaSeedBase, ...indiaAdditions].map((dest
     : [destination.image, ...(indiaPhotoAdditions[destination.id] ?? []).map(destinationPhoto)],
 }))
 
-const destinationSeed: Destination[] = [...indiaSeed, ...foreignSeed]
+type CommonsPhoto = { src: string; credit: { label: string; url: string } }
+
+// Replaces the seed photos for guides whose Unsplash photos were missing or showed other places.
+// Entries are Unsplash photo ids or credited Wikimedia Commons photos; the first entry is the cover.
+const verifiedGalleries: Record<string, Array<string | CommonsPhoto>> = {
+  jaipur: [
+    'photo-1599661046827-dacff0c0f09a',
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/East_facade_Hawa_Mahal_Jaipur_from_ground_level_%28July_2022%29_-_img_01.jpg/1280px-East_facade_Hawa_Mahal_Jaipur_from_ground_level_%28July_2022%29_-_img_01.jpg', credit: { label: 'Hawa Mahal · Chainwit. · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:East_facade_Hawa_Mahal_Jaipur_from_ground_level_(July_2022)_-_img_01.jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Amer_Fort_-_Ganesh_Pol_%282022%29_-_img_01.jpg/1280px-Amer_Fort_-_Ganesh_Pol_%282022%29_-_img_01.jpg', credit: { label: 'Ganesh Pol, Amer Fort · Chainwit. · CC BY 4.0', url: 'https://commons.wikimedia.org/wiki/File:Amer_Fort_-_Ganesh_Pol_(2022)_-_img_01.jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Jaipur_03-2016_39_Jal_Mahal_-_Water_Palace.jpg/1280px-Jaipur_03-2016_39_Jal_Mahal_-_Water_Palace.jpg', credit: { label: 'Jal Mahal · A.Savin · FAL', url: 'https://commons.wikimedia.org/wiki/File:Jaipur_03-2016_39_Jal_Mahal_-_Water_Palace.jpg' } },
+  ],
+  hampi: [
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Complex_of_Virupaksha_Temple%2C_Hampi_%2801%29.jpg/1280px-Complex_of_Virupaksha_Temple%2C_Hampi_%2801%29.jpg', credit: { label: 'Virupaksha Temple · iMahesh · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Complex_of_Virupaksha_Temple,_Hampi_(01).jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Hampi_-_Vittala_Temple_-_Entrance_Gopuram.jpg/1280px-Hampi_-_Vittala_Temple_-_Entrance_Gopuram.jpg', credit: { label: 'Vittala Temple gopuram · Ingo Mehling · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Hampi_-_Vittala_Temple_-_Entrance_Gopuram.jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Krishna_Pushkarani_-_Hampi_Ruins.jpg/1280px-Krishna_Pushkarani_-_Hampi_Ruins.jpg', credit: { label: 'Krishna Pushkarani · Dey.sandip · CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Krishna_Pushkarani_-_Hampi_Ruins.jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/PAN_SUPARI_BAZAAR.jpg/1280px-PAN_SUPARI_BAZAAR.jpg', credit: { label: 'Hampi Bazaar · Basavarajmin21 · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:PAN_SUPARI_BAZAAR.jpg' } },
+  ],
+  sikkim: [
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Gurudongmar_Lake_Sikkim%2C_India_%28edit%29.jpg/1280px-Gurudongmar_Lake_Sikkim%2C_India_%28edit%29.jpg', credit: { label: 'Gurudongmar Lake · UnpetitproleX, after Yoghya · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Gurudongmar_Lake_Sikkim,_India_(edit).jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/View_of_Gangtok_City_from_Crown_Prince_Tenzing_Kunzang_Namgyal_Walkway.jpg/1280px-View_of_Gangtok_City_from_Crown_Prince_Tenzing_Kunzang_Namgyal_Walkway.jpg', credit: { label: 'Gangtok · Subhrajyoti07 · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:View_of_Gangtok_City_from_Crown_Prince_Tenzing_Kunzang_Namgyal_Walkway.jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Buddha_statue_at_Buddha_Park_of_Ravangla%2C_Sikkim%2C_India_%281%29.jpg/1280px-Buddha_statue_at_Buddha_Park_of_Ravangla%2C_Sikkim%2C_India_%281%29.jpg', credit: { label: 'Buddha Park, Ravangla · Joydeep · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Buddha_statue_at_Buddha_Park_of_Ravangla,_Sikkim,_India_(1).jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Ralang_monastery_sikkim_1.jpg/1280px-Ralang_monastery_sikkim_1.jpg', credit: { label: 'Ralang Monastery · Joydeep · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Ralang_monastery_sikkim_1.jpg' } },
+  ],
+  varanasi: [
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Varanasi_2010_Ahilyabai_Ghat.jpg/1280px-Varanasi_2010_Ahilyabai_Ghat.jpg', credit: { label: 'Ahilyabai Ghat · Marcin Białek · CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Varanasi_2010_Ahilyabai_Ghat.jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/India_-_Varanasi_puja_ceremony_-_1772.jpg/1280px-India_-_Varanasi_puja_ceremony_-_1772.jpg', credit: { label: 'Ganga aarti · Jorge Royan · CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:India_-_Varanasi_puja_ceremony_-_1772.jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Varanasi_Munshi_Ghat3.jpg/1280px-Varanasi_Munshi_Ghat3.jpg', credit: { label: 'Munshi Ghat · Marcin Białek · CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Varanasi_Munshi_Ghat3.jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Varanasi_2010_ghats4.JPG/1280px-Varanasi_2010_ghats4.JPG', credit: { label: 'Ghats from the river · Marcin Białek · CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Varanasi_2010_ghats4.JPG' } },
+  ],
+  kyoto: [
+    'photo-1493976040374-85c8e12f0c0e',
+    'photo-1478436127897-769e1b3f0f36',
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Kiyomizu-dera%2C_Kyoto%2C_November_2016_-02.jpg/1280px-Kiyomizu-dera%2C_Kyoto%2C_November_2016_-02.jpg', credit: { label: 'Kiyomizu-dera · Martin Falbisoner · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Kiyomizu-dera,_Kyoto,_November_2016_-02.jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Golden_Pavilion_Kinkaku-ji_2024.jpg/1280px-Golden_Pavilion_Kinkaku-ji_2024.jpg', credit: { label: 'Kinkaku-ji · Nacaru · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Golden_Pavilion_Kinkaku-ji_2024.jpg' } },
+    { src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Wooden_and_bamboo_facades_of_dwellings_with_sudare_in_a_cobbled_street_of_Gion%2C_perspective_effect_with_vanishing_point%2C_Kyoto%2C_Japan.jpg/1280px-Wooden_and_bamboo_facades_of_dwellings_with_sudare_in_a_cobbled_street_of_Gion%2C_perspective_effect_with_vanishing_point%2C_Kyoto%2C_Japan.jpg', credit: { label: 'Gion lane · Basile Morin · CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Wooden_and_bamboo_facades_of_dwellings_with_sudare_in_a_cobbled_street_of_Gion,_perspective_effect_with_vanishing_point,_Kyoto,_Japan.jpg' } },
+  ],
+}
+
+function withVerifiedGallery(destination: Destination): Destination {
+  const photos = verifiedGalleries[destination.id]
+  if (!photos) return destination
+  const gallery = photos.map((photo) => typeof photo === 'string' ? destinationPhoto(photo) : photo.src)
+  const galleryAttributions = photos.map((photo) => typeof photo === 'string' ? null : photo.credit)
+  return { ...destination, image: gallery[0], gallery, galleryAttributions }
+}
+
+const destinationSeed: Destination[] = [...indiaSeed, ...foreignSeed].map(withVerifiedGallery)
 
 const categories: Category[] = ['All', 'Drive & rail', 'Trek & trails', 'Coast', 'Culture', 'Nature', 'Slow living']
 const heroImage = 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=2200&q=90'
