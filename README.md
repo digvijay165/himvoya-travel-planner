@@ -21,7 +21,7 @@
 
 ---
 
-**Himvoya** is an India-first travel planner. Browse hand-written guides to twenty Indian destinations, from Himalayan drives and heritage railways to Kerala backwaters, or search any city or town in the world. Each guide comes with photos, a map, a five-day forecast and ideas for what to see, eat and where to stay. Pick a few places and the trip planner sketches the days in between.
+**Himvoya** is an India-first travel planner. Browse hand-written guides to 92 Indian destinations, from Himalayan treks and heritage railways to Kerala backwaters and tiger reserves, or search any city or town in the world. Each guide comes with photos, a map, a five-day forecast and ideas for what to see, eat and where to stay. Pick a few places and the trip planner sketches the days in between.
 
 It is a React + TypeScript frontend and a small Express API in one Node process, storing accounts and trips in Node's built-in SQLite.
 
@@ -36,7 +36,9 @@ It is a React + TypeScript frontend and a small Express API in one Node process,
 <td width="50%" valign="top">
 
 ### 🧭 India, at your pace
-- **20 curated Indian destinations** across six moods: drive & rail, trek & trails, coast, culture, nature and slow living
+- **92 curated Indian destinations** across six moods: drive & rail, trek & trails, coast, culture, nature and slow living
+- **30 mountain treks**, from Triund, Kedarkantha and Hampta Pass to Goecha La, Markha Valley and Kashmir Great Lakes
+- Hill towns, heritage cities, beaches and tiger reserves, each colour-coded by mood
 - Search **any Indian city or town** beyond the curated set
 - Filter by mood, or search by place or feeling
 
@@ -54,7 +56,7 @@ It is a React + TypeScript frontend and a small Express API in one Node process,
 <td width="50%" valign="top">
 
 ### 📍 Guides worth reading
-- Photo galleries, map embeds and a **live five-day forecast**
+- **About 8 verified photos per guide** (over 800 in all), each credited to its photographer, plus map embeds and a **live five-day forecast**
 - Sights, local transport, stay areas, food and nearby escapes
 - Best time to visit, language, currency and planning notes
 
@@ -197,10 +199,14 @@ The repo includes a [Render Blueprint](render.yaml) for a free Node web service.
 
 ```text
 server.mjs                      Express API, SQLite storage, backups, static hosting
-src/App.tsx                     Routes, destination data, explore pages and trip planner
+src/App.tsx                     Routes, original destination data, explore pages and trip planner
+src/data/more-india-places.ts   Treks, hill towns, cities, coast and wildlife guides
+src/data/place-photos.ts        Verified, credited photos for every guide
+src/theme.css                   Travel colour theme layered over index.css
 src/components/                 Guides, auth, onboarding, header, legal pages
 src/components/ui/              Liquid Sculpture particle hero (shadcn-compatible)
 scripts/screenshots.mjs         Regenerates the README screenshots
+scripts/check-photos.mjs        Checks every guide photo loads
 render.yaml                     Render Blueprint
 ```
 
@@ -208,4 +214,4 @@ To refresh the screenshots, run `npm run build` and then `node scripts/screensho
 
 ## 📝 Notes
 
-Featured photos load from Unsplash; searched destination photos come from Wikimedia Commons and link to their attribution. Worldwide search covers GeoNames cities and towns, not every attraction or live travel inventory. Himvoya creates planning drafts. It does not book flights, accommodation or tours.
+Every guide photo is from Wikimedia Commons and was checked by eye to show the right place. Each one is credited with its title, author and license in the guide. `src/data/place-photos.ts` lists them all, and `node scripts/check-photos.mjs` confirms they load. Searched destination photos also come from Wikimedia Commons. Worldwide search covers GeoNames cities and towns, not every attraction or live travel inventory. Himvoya creates planning drafts. It does not book flights, accommodation or tours.
