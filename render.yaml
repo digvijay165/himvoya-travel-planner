@@ -2,23 +2,12 @@ services:
   - type: web
     name: himvoya-travel-planner
     runtime: node
-    plan: 0.5c-512mb
+    plan: free
     region: singapore
     buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
-    disk:
-      name: himvoya-sqlite-data
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: ROAM_DB_PATH
-        value: /var/data/travel-planner.sqlite
-      - key: RESEND_API_KEY
-        sync: false
-      - key: ROAM_EMAIL_FROM
-        sync: false
-      - key: ROAM_TURNSTILE_SITE_KEY
-        sync: false
-      - key: ROAM_TURNSTILE_SECRET_KEY
-        sync: false
+        value: /tmp/travel-planner.sqlite
+
