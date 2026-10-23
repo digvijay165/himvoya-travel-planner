@@ -77,4 +77,3 @@ Snapshots use Node's SQLite online backup API and are created in a sibling `back
 - shadcn-compatible `src/components/ui` structure and `components.json` aliases.
 
 Featured photos load from Unsplash; searched destination photos come from Wikimedia Commons and link to file attribution. Worldwide location search covers GeoNames cities and towns, not every attraction or live travel inventory. The app creates planning drafts and does not book flights, accommodation, or tours. The backend uses Node’s built-in SQLite module, so run it with Node 24.15 or newer.
-
