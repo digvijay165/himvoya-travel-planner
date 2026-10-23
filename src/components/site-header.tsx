@@ -37,6 +37,7 @@ export default function SiteHeader({ page, userEmail }: Props) {
             {link.label}
           </a>
         ))}
+        <a className="header-github" href="https://github.com/digvijay165/himvoya-travel-planner" target="_blank" rel="noreferrer">GitHub <ArrowUpRight size={12} aria-hidden="true" /></a>
       </nav>
       <a className="header-account" href={userEmail ? '#/account' : '#/login'}>
         <span>{userEmail ? 'My account' : 'Sign in'}</span><ArrowUpRight size={15} />
