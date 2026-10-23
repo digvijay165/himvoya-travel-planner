@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+/data/
 data/*.sqlite
 data/*.sqlite-shm
 data/*.sqlite-wal
@@ -27,3 +28,4 @@ data/backups/
 *.njsproj
 *.sln
 *.sw?
+
