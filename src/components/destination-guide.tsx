@@ -27,7 +27,7 @@ export type PlaceGuideData = {
   language?: string
   currency?: string
   gallery?: string[]
-  galleryAttributions?: Array<{ label: string; url: string }>
+  galleryAttributions?: Array<{ label: string; url: string } | null>
   timezone?: string
   population?: number | null
   elevation?: number | null
@@ -71,6 +71,7 @@ function weatherDescription(code: number | null) {
 export default function DestinationGuide({ destination, isPicked, onClose, onToggle, page = false }: Props) {
   const photos = destination.gallery?.length ? destination.gallery : [destination.image]
   const [activePhoto, setActivePhoto] = useState(0)
+  const photoCredit = destination.galleryAttributions?.[activePhoto]
   const [weather, setWeather] = useState<WeatherSummary | null>(null)
   const [weatherState, setWeatherState] = useState<'loading' | 'ready' | 'unavailable'>('loading')
   const latitude = destination.coordinates?.lat
@@ -218,8 +219,8 @@ export default function DestinationGuide({ destination, isPicked, onClose, onTog
               <button type="button" className={`guide-add-button ${isPicked ? 'selected' : ''}`} onClick={onToggle}>{isPicked ? 'Remove from your trip' : 'Add to your trip'}<span>{isPicked ? '−' : '+'}</span></button>
             </div>
             <p className="guide-photo-credit">
-              {destination.galleryAttributions?.[activePhoto]
-                ? <>Photo: <a href={destination.galleryAttributions[activePhoto].url} target="_blank" rel="noreferrer">{destination.galleryAttributions[activePhoto].label}</a> · Wikimedia Commons</>
+              {photoCredit
+                ? <>Photo: <a href={photoCredit.url} target="_blank" rel="noreferrer">{photoCredit.label}</a> · Wikimedia Commons</>
                 : 'Photos from Unsplash'}
               {' · '}Check local access and seasonal conditions before visiting.
             </p>
