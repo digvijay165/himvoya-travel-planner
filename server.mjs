@@ -704,8 +704,18 @@ app.get('/api/places/weather', async (request, response) => {
   }
 })
 
-app.get('/api/health', (_request, response) => {
-  response.json({ status: 'ok', storage: 'sqlite' })
+// Uptime monitors and Render's health check poll this; it fails with 503 when SQLite can't answer.
+app.get(['/api/health', '/health'], (_request, response) => {
+  response.set('Cache-Control', 'no-store')
+  const checkedAt = new Date().toISOString()
+  const uptimeSeconds = Math.round(process.uptime())
+  try {
+    database.prepare('SELECT 1').get()
+    response.json({ status: 'ok', storage: 'sqlite', database: 'ok', uptimeSeconds, checkedAt })
+  } catch (error) {
+    console.error('[roam api] Health check failed:', error?.name || 'Error')
+    response.status(503).json({ status: 'error', storage: 'sqlite', database: 'unavailable', uptimeSeconds, checkedAt })
+  }
 })
 
 const trackedRoutes = new Set(['/','/places','/place','/world','/planner','/about','/privacy','/terms','/onboarding','/login','/register','/account','/account-deleted','/verify-email','/forgot-password','/reset-password','/not-found'])
