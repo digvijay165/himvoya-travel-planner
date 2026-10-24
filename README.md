@@ -202,7 +202,7 @@ The repo includes a [Render Blueprint](render.yaml) for a free Node web service.
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
-| `GET` | `/api/health` | Reports whether the backend is running |
+| `GET` | `/api/health` (also `/health`) | Checks the server and database; `200` when healthy, `503` when not. Point your uptime monitor here |
 | `GET` | `/api/auth/me` | The signed-in account, if any |
 | `POST` | `/api/auth/register` | Create an account |
 | `POST` | `/api/auth/login` | Sign in |
